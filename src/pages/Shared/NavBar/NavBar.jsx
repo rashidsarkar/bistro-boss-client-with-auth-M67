@@ -2,16 +2,20 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../providers/AuthProvider";
 import { BsCartFill } from "react-icons/bs";
+import useCart from "../../../hooks/useCart";
 
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const { carts, isLoading } = useCart();
 
   const handleLogOut = () => {
     logOut()
       .then(() => {})
       .catch((error) => console.log(error));
   };
-
+  // if (isLoading) {
+  //   return <p>loading.....</p>;
+  // }
   const navOptions = (
     <>
       <li>
@@ -30,7 +34,7 @@ const NavBar = () => {
         <Link to={"/"}>
           <button className="btn">
             <BsCartFill className="mr-2"></BsCartFill>
-            <div className="badge badge-secondary">+99</div>
+            <div className="badge badge-secondary">+{carts?.length}</div>
           </button>
         </Link>
       </li>

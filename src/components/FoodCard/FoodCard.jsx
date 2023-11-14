@@ -1,16 +1,42 @@
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useCart from "../../hooks/useCart";
 
 const FoodCard = ({ item }) => {
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { cartsRefetch } = useCart();
   //   console.log(user);
-  const { name, image, price, recipe } = item;
-  const handleAddtoCart = (food) => {
+  const { name, image, price, recipe, _id } = item;
+  const handleAddtoCart = () => {
     if (user && user.email) {
-      //sent cart item to the data base
+      //TODO sent cart item to the data base
+      // console.log(user.email, food);
+      const cartItem = {
+        menuID: _id,
+        email: user.email,
+        name,
+        image,
+        price,
+      };
+      axiosSecure.post("/api/addTocarts", cartItem).then((res) => {
+        console.log(res.data);
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: `${name} added to your cart`,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          // refetch the carts  to update cart item count
+          cartsRefetch();
+        }
+      });
     } else {
       // set sweetalart to user is not found
       Swal.fire({
@@ -42,7 +68,7 @@ const FoodCard = ({ item }) => {
         <p>{recipe}</p>
         <div className="justify-end card-actions">
           <button
-            onClick={() => handleAddtoCart(item)}
+            onClick={() => handleAddtoCart()}
             className="mt-4 border-0 border-b-4 border-orange-400 btn btn-outline bg-slate-100"
           >
             Add to Cart

@@ -16,6 +16,7 @@ const Login = () => {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/";
+  console.log("state in location login page", location.state);
 
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -29,7 +30,7 @@ const Login = () => {
     console.log(email, password);
     signIn(email, password).then((result) => {
       const user = result.user;
-      console.log(user);
+      // console.log(user);
       Swal.fire({
         title: "User Login Successful.",
         showClass: {
@@ -109,8 +110,9 @@ const Login = () => {
                 />
               </div>
               <div className="mt-6 form-control">
+                {/* TODO apply disable for re captcha */}
                 <input
-                  disabled={disabled}
+                  disabled={false}
                   className="btn btn-primary"
                   type="submit"
                   value="Login"
